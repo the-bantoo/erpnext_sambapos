@@ -2,10 +2,7 @@
 Syncs SambaPOS Sales Invoices to ERPNext. Setup is tedious for now but with enough demand and support we are willing to make it better.
 
 
-[
-![Support this project](https://github.com/the-bantoo/erpnext_sambapos/blob/master/Support.png)
-]
-(https://dashboard.flutterwave.com/donate/xdf1tblhrxbk)
+[![Support this project](https://github.com/the-bantoo/erpnext_sambapos/blob/master/Support.png)](https://dashboard.flutterwave.com/donate/xdf1tblhrxbk)
 
 
 ## Requirements
