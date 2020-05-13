@@ -18,7 +18,8 @@ Setup the script
 	`pip install pyodbc`
 - Install git - https://git-scm.com/download/win
 - Install Frappe Client in the app root directory (sambapos_erpnext) - https://github.com/the-bantoo/erpnext_sambapos 
-	`git clone https://github.com/the-bantoo/frappe-client.git
+	
+	`git clone https://github.com/the-bantoo/frappe-client.git`
 	`pip install -e frappe-client`
 - Setup Windows Scheduler 
 	- https://www.esri.com/arcgis-blog/products/product/analytics/scheduling-a-python-script-or-model-to-run-at-a-prescribed-time/?rmedium=redirect&rsource=blogs.esri.com/esri/arcgis/2013/07/30/scheduling-a-scrip
