@@ -21,30 +21,30 @@ Setup the script
 	`git clone https://github.com/the-bantoo/frappe-client.git
 	`pip install -e frappe-client`
 - Setup Windows Scheduler 
-- https://www.esri.com/arcgis-blog/products/product/analytics/scheduling-a-python-script-or-model-to-run-at-a-prescribed-time/?rmedium=redirect&rsource=blogs.esri.com/esri/arcgis/2013/07/30/scheduling-a-scrip
-- https://www.reddit.com/r/learnpython/comments/c2ya1y/best_way_to_schedule_a_python_script_that_runs/erndv0o/
+	- https://www.esri.com/arcgis-blog/products/product/analytics/scheduling-a-python-script-or-model-to-run-at-a-prescribed-time/?rmedium=redirect&rsource=blogs.esri.com/esri/arcgis/2013/07/30/scheduling-a-scrip
+	- https://www.reddit.com/r/learnpython/comments/c2ya1y/best_way_to_schedule_a_python_script_that_runs/erndv0o/
 
-	Put the directory in the start-in field (without the final backslash), and JUST the filename (and extension) in the program/script field.
-	For example if my file is in:
-	`C:\Folder1\Folder2\python_file.py`
+		Put the directory in the start-in field (without the final backslash), and JUST the filename (and extension) in the program/script field.
+		For example if my file is in:
+		`C:\Folder1\Folder2\python_file.py`
 
-	Then I'll make a batch file in notepad, run.bat, in the same folder, and just type this inside it:
-	python python_file.py
+		Then I'll make a batch file in notepad, run.bat, in the same folder, and just type this inside it:
+		python python_file.py
 
-	To run from a very specific version of python with all the correct libraries and not messing with PATH. In this case the batch file would look like this:
-	```
-	SET PYTHONPATH=C:\localpython\Lib\sitepackages
-	C:\localpython\python.exe python_file.py
-	```
+		To run from a very specific version of python with all the correct libraries and not messing with PATH. In this case the batch file would look like this:
+		```
+		SET PYTHONPATH=C:\localpython\Lib\sitepackages
+		C:\localpython\python.exe python_file.py
+		```
 
 
-	Then in the task scheduler I'll set up my regular trigger times and in the action tab, put the info in in the following way:
-	Action: start a program
-	Program/script: run.bat
-	Add arguments (optional): [I leave this blank, I can always put arguments in my batch file]
-	Start in (option): C:\Folder1\Folder2
+		Then in the task scheduler I'll set up my regular trigger times and in the action tab, put the info in in the following way:
+		Action: start a program
+		Program/script: run.bat
+		Add arguments (optional): [I leave this blank, I can always put arguments in my batch file]
+		Start in (option): C:\Folder1\Folder2
 
-	General > Run whether user is logged on > Tick: Do not store password if password entry fails
+		General > Run whether user is logged on > Tick: Do not store password if password entry fails
 
 ## Add ERPNext Custom Fields to Sales Invoice
 - restaurant_name
