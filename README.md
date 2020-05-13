@@ -3,8 +3,7 @@ Syncs SambaPOS Sales Invoices to ERPNext. Setup is tedious for now but with enou
 
 
 [
-  ![Support this Project]
-  (https://www.theidealmuslimah.com/wp-content/uploads/2016/06/Support.png)
+![Support this project](https://github.com/the-bantoo/erpnext_sambapos/blob/master/Support.png)
 ]
 (https://dashboard.flutterwave.com/donate/xdf1tblhrxbk)
 
