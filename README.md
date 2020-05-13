@@ -61,8 +61,9 @@ Columns
   - Set property Default Value or Binding to 0 (zero digit) 
   - Save and close
   - Repeat for the next tables
-ItemUploaded and Order Uploaded to MenuItems, Orders
-TicketUploaded to Tickets
+  
+- ItemUploaded and Order Uploaded to MenuItems, Orders
+- TicketUploaded to Tickets
   - Right click table
   - Design
   - Add new column called Modified type datetime
