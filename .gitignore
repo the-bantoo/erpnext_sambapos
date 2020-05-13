@@ -1,0 +1,9 @@
+*.pyc
+*.code-workspace
+/dist
+*.log
+*.sql
+*.txt
+[submodule "frappe-client"]
+	path = frappe-client
+	url = https://github.com/DigitasDom/frappe-client
