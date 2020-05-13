@@ -71,14 +71,16 @@ TicketUploaded to Tickets
 ## Edit settings.py
 Configure connection settings in settings.py. Make sure the erpnext values are copied exactly as they appear in your erpnext instance. 
 	
-Create views
+## Create database views
 ### GroupCodesView = Item Groups
 - Right click Views
 - New
 - Close
+
 #### SQL
 
-```SELECT        GroupCode, GroupUploaded
+```
+SELECT        GroupCode, GroupUploaded
 FROM            dbo.MenuItems
 WHERE        (Id IN
                              (SELECT        MIN(Id) AS Expr1
@@ -86,8 +88,8 @@ WHERE        (Id IN
                                GROUP BY GroupCode)) AND GroupCode <> ''
 UNION
 SELECT        Name AS GroupCode, [GroupUploaded]
-FROM            dbo.ScreenMenuCategories```
-
+FROM            dbo.ScreenMenuCategories
+```
 
 - CTRL + S to Save
 
@@ -95,19 +97,23 @@ FROM            dbo.ScreenMenuCategories```
 ### OrdersView = Sales Invoices/Orders
 #### Paste SQL
 		
-```SELECT        o.Id AS OrderID, o.Id, o.TicketId, o.MenuItemId, o.MenuItemName, o.PortionName, o.Price, o.Quantity, o.PortionCount, o.OrderNumber, o.CreatingUserName, o.CreatedDateTime, o.LastUpdateDateTime, 
+```
+SELECT        o.Id AS OrderID, o.Id, o.TicketId, o.MenuItemId, o.MenuItemName, o.PortionName, o.Price, o.Quantity, o.PortionCount, o.OrderNumber, o.CreatingUserName, o.CreatedDateTime, o.LastUpdateDateTime, 
                          o.AccountTransactionTypeId, o.OrderStates, o.Price * o.Quantity AS oTotal, m.GroupCode
 FROM            dbo.Orders AS o LEFT OUTER JOIN
                          dbo.MenuItems AS m ON o.MenuItemId = m.Id
-WHERE        (o.OrderStates NOT LIKE '%Void%') AND (o.OrderStates NOT LIKE '%Cancel%')```
+WHERE        (o.OrderStates NOT LIKE '%Void%') AND (o.OrderStates NOT LIKE '%Cancel%')
+```
 
 
 ### MenuItemView = Items
 #### Paste SQL 
 
-```SELECT DISTINCT o.MenuItemName, i.GroupCode, o.PortionName, o.Price, o.MenuItemId, i.ItemUploaded
+```
+SELECT DISTINCT o.MenuItemName, i.GroupCode, o.PortionName, o.Price, o.MenuItemId, i.ItemUploaded
 FROM            dbo.OrdersView AS o LEFT OUTER JOIN
-                         dbo.MenuItems AS i ON o.MenuItemId = i.Id```
+                         dbo.MenuItems AS i ON o.MenuItemId = i.Id
+```
 
 
 
@@ -115,12 +121,14 @@ FROM            dbo.OrdersView AS o LEFT OUTER JOIN
 ### PaidTicketView = Paid Sales Invoice
 #### SQL
 
-```SELECT        t.TicketNumber AS TicketNo, t.TicketUid AS Uid, p.Id AS PaymentID, p.Name AS PaymentType, CONVERT(varchar(30), t.LastUpdateTime) AS Modified, t.LastModifiedUserName AS SalesPerson, t.Note, t.TotalAmount AS TotalPaid, 
+```
+SELECT        t.TicketNumber AS TicketNo, t.TicketUid AS Uid, p.Id AS PaymentID, p.Name AS PaymentType, CONVERT(varchar(30), t.LastUpdateTime) AS Modified, t.LastModifiedUserName AS SalesPerson, t.Note, t.TotalAmount AS TotalPaid, 
                          t.RemainingAmount AS UnpaidBalance, t.TaxIncluded, t.Name, t.TicketUploaded, t.Id, COALESCE (te1.EntityName, 'Walk-in') AS Customer, COALESCE (te2.EntityName, 'Take-Away/Delivery') AS TableUsed
 FROM            dbo.Tickets AS t INNER JOIN
                          dbo.Payments AS p ON t.Id = p.TicketId LEFT OUTER JOIN
                          dbo.TicketEntities AS te1 ON t.Id = te1.Ticket_Id AND te1.EntityTypeId = 1 LEFT OUTER JOIN
-                         dbo.TicketEntities AS te2 ON t.Id = te2.Ticket_Id AND te2.EntityTypeId = 2```
+                         dbo.TicketEntities AS te2 ON t.Id = te2.Ticket_Id AND te2.EntityTypeId = 2
+```
 
 
 
@@ -129,7 +137,8 @@ Ignore the Warning Popup Message on saving
 ### PricedUOMItem
 #### SQL
 
-```SELECT DISTINCT o.MenuItemName, o.GroupCode, o.PortionName, o.Price, o.MenuItemId, i.ItemUploaded
+```
+SELECT DISTINCT o.MenuItemName, o.GroupCode, o.PortionName, o.Price, o.MenuItemId, i.ItemUploaded
 FROM            dbo.OrdersView AS o LEFT OUTER JOIN
                          dbo.MenuItems AS i ON o.MenuItemId = i.Id
 
@@ -140,4 +149,5 @@ FROM            dbo.MenuItemPortions
 WHERE        (Id IN
                              (SELECT        MIN(Id) AS Expr1
                                FROM            dbo.MenuItemPortions AS MenuItemPortions_1
-                               GROUP BY Name))```
+                               GROUP BY Name))
+```
