@@ -6,42 +6,45 @@ Syncs SambaPOS Sales Invoices to ERPNext. Setup is tedious for now but with enou
 - ERPNext v12
 
 ## Prepare localhost environment
-Install the `pyodbc` driver
-`pip install pyodbc`
 
-Install Frappe Client in the app root directory (sambapos_erpnext)
 
-`git clone https://github.com/the-bantoo/frappe-client.git
-`pip install -e frappe-client`
+
+
 
 Schedule Python Job on Windows
 Setup the script
-Install python 3.x for windows - https://www.python.org/downloads/release/python-382/
-Install git - https://git-scm.com/download/win
-Clone repo - https://github.com/the-bantoo/erpnext_sambapos 
-Setup Windows Scheduler 
-https://www.esri.com/arcgis-blog/products/product/analytics/scheduling-a-python-script-or-model-to-run-at-a-prescribed-time/?rmedium=redirect&rsource=blogs.esri.com/esri/arcgis/2013/07/30/scheduling-a-scrip
-https://www.reddit.com/r/learnpython/comments/c2ya1y/best_way_to_schedule_a_python_script_that_runs/erndv0o/
+- Install python 3.x for windows - https://www.python.org/downloads/release/python-382/
+- Install the `pyodbc` driver
+	`pip install pyodbc`
+- Install git - https://git-scm.com/download/win
+- Install Frappe Client in the app root directory (sambapos_erpnext) - https://github.com/the-bantoo/erpnext_sambapos 
+	`git clone https://github.com/the-bantoo/frappe-client.git
+	`pip install -e frappe-client`
+- Setup Windows Scheduler 
+- https://www.esri.com/arcgis-blog/products/product/analytics/scheduling-a-python-script-or-model-to-run-at-a-prescribed-time/?rmedium=redirect&rsource=blogs.esri.com/esri/arcgis/2013/07/30/scheduling-a-scrip
+- https://www.reddit.com/r/learnpython/comments/c2ya1y/best_way_to_schedule_a_python_script_that_runs/erndv0o/
 
-Put the directory in the start-in field (without the final backslash), and JUST the filename (and extension) in the program/script field.
-For example if my file is in:
-C:\Folder1\Folder2\python_file.py
+	Put the directory in the start-in field (without the final backslash), and JUST the filename (and extension) in the program/script field.
+	For example if my file is in:
+	`C:\Folder1\Folder2\python_file.py`
 
-Then I'll make a batch file in notepad, run.bat, in the same folder, and just type this inside it:
-python python_file.py
+	Then I'll make a batch file in notepad, run.bat, in the same folder, and just type this inside it:
+	python python_file.py
 
-To run from a very specific version of python with all the correct libraries and not messing with PATH. In this case the batch file would look like this:
-SET PYTHONPATH=C:\localpython\Lib\sitepackages
-C:\localpython\python.exe python_file.py
+	To run from a very specific version of python with all the correct libraries and not messing with PATH. In this case the batch file would look like this:
+	```
+	SET PYTHONPATH=C:\localpython\Lib\sitepackages
+	C:\localpython\python.exe python_file.py
+	```
 
 
-Then in the task scheduler I'll set up my regular trigger times and in the action tab, put the info in in the following way:
-Action: start a program
-Program/script: run.bat
-Add arguments (optional): [I leave this blank, I can always put arguments in my batch file]
-Start in (option): C:\Folder1\Folder2
+	Then in the task scheduler I'll set up my regular trigger times and in the action tab, put the info in in the following way:
+	Action: start a program
+	Program/script: run.bat
+	Add arguments (optional): [I leave this blank, I can always put arguments in my batch file]
+	Start in (option): C:\Folder1\Folder2
 
-General > Run whether user is logged on > Tick: Do not store password if password entry fails
+	General > Run whether user is logged on > Tick: Do not store password if password entry fails
 
 ## Add ERPNext Custom Fields to Sales Invoice
 - Sales Invoice
@@ -151,3 +154,15 @@ WHERE        (Id IN
                                FROM            dbo.MenuItemPortions AS MenuItemPortions_1
                                GROUP BY Name))
 ```
+
+
+## Roadmap
+- Payment Types
+- Deduction of (ingredient) Stock Items
+- Make UOM Tree
+- Updated sql transactions
+	- Batch search: Get list to test against: items (done), groups (done), uoms
+	- Update atrributes: Price, UOM, Group -> Update
+
+- Automate the DB Setup in Python SQL
+- Create an ERPNext App to hold configs
