@@ -63,8 +63,8 @@ Setup the script
 - Sambapos_ticket
 
 ## Configure MSSQL Database
-Columns 
-- GroupUploaded to ScreenMenuCategories and MenuItems
+#### Add new Columns in the following tables
+- GroupUploaded to ScreenMenuCategories (table) and MenuItems (table)
   - Right click table
   - Design
   - Add new column called xUploaded type int
@@ -73,7 +73,7 @@ Columns
   - Save and close
   - Repeat for the next tables
   
-- ItemUploaded and Order Uploaded to MenuItems, Orders
+- ItemUploaded and Order Uploaded to MenuItems, Orders (table)
 - TicketUploaded to Tickets
   - Right click table
   - Design
@@ -109,7 +109,7 @@ FROM            dbo.ScreenMenuCategories
 
 
 ### OrdersView = Sales Invoices/Orders
-#### Paste SQL
+#### SQL
 		
 ```
 SELECT        o.Id AS OrderID, o.Id, o.TicketId, o.MenuItemId, o.MenuItemName, o.PortionName, o.Price, o.Quantity, o.PortionCount, o.OrderNumber, o.CreatingUserName, o.CreatedDateTime, o.LastUpdateDateTime, 
@@ -121,7 +121,7 @@ WHERE        (o.OrderStates NOT LIKE '%Void%') AND (o.OrderStates NOT LIKE '%Can
 
 
 ### MenuItemView = Items
-#### Paste SQL 
+#### SQL 
 
 ```
 SELECT DISTINCT o.MenuItemName, i.GroupCode, o.PortionName, o.Price, o.MenuItemId, i.ItemUploaded
@@ -155,9 +155,12 @@ Ignore the Warning Popup Message on saving
 SELECT DISTINCT o.MenuItemName, o.GroupCode, o.PortionName, o.Price, o.MenuItemId, i.ItemUploaded
 FROM            dbo.OrdersView AS o LEFT OUTER JOIN
                          dbo.MenuItems AS i ON o.MenuItemId = i.Id
+```
 
-UOMView
-SQL:
+### UOMView
+#### SQL
+
+```
 SELECT        Id, Name, MenuItemId AS ProductID, Multiplier, Modified
 FROM            dbo.MenuItemPortions
 WHERE        (Id IN
