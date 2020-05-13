@@ -1,6 +1,8 @@
 # erpnext_sambapos 
 Syncs SambaPOS Sales Invoices to ERPNext. Setup is tedious for now but with enough demand and support we are willing to make it better.
 
+Please click here to help us improve this app: https://thebantoo.com/blog/general/crowdsourced-development-support
+
 ## Requirements
 - SambaPOS with SQLExpress or SQL 2014 - 2017
 - ERPNext v12
