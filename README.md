@@ -47,7 +47,6 @@ Setup the script
 	General > Run whether user is logged on > Tick: Do not store password if password entry fails
 
 ## Add ERPNext Custom Fields to Sales Invoice
-- Sales Invoice
 - restaurant_name
 - restaurant_table
 - Sambapos_ticket
@@ -165,4 +164,4 @@ WHERE        (Id IN
 	- Update atrributes: Price, UOM, Group -> Update
 
 - Automate the DB Setup in Python SQL
-- Create an ERPNext App to hold configs
+- Create an ERPNext App to hold configs and auto configure erpnext changes
