@@ -1,7 +1,13 @@
 # erpnext_sambapos 
 Syncs SambaPOS Sales Invoices to ERPNext. Setup is tedious for now but with enough demand and support we are willing to make it better.
 
-Please click here to help us improve this app: https://thebantoo.com/blog/general/crowdsourced-development-support
+
+[
+  ![Support this Project]
+  (https://www.theidealmuslimah.com/wp-content/uploads/2016/06/Support.png)
+]
+(https://dashboard.flutterwave.com/donate/xdf1tblhrxbk)
+
 
 ## Requirements
 - SambaPOS with SQLExpress or SQL 2014 - 2017
@@ -182,3 +188,6 @@ WHERE        (Id IN
 
 - Automate the DB Setup in Python SQL
 - Create an ERPNext App to hold configs and auto configure erpnext changes
+
+## Here's how you can help improve this project
+[Click here to learn more](https://thebantoo.com/blog/general/crowdsourced-development-support)
