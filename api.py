@@ -10,8 +10,8 @@ import settings
 """
     TODO
     - Production readiness
+        - POS profile selection and sales person = check item expense account after
         - Cron job windows - working
-        - Payment types: Credit Card
         - Make UOM Tree
         - Document
         - Move API user details to DB
@@ -27,19 +27,19 @@ import settings
             - Error Log
 
     - Issues
-        - MenuItemView Price is incorrect - use portion price - Solved
 
     Roadmap
     - Payment Types
+    - Deduction of (ingredient) Stock Items
     - Make UOM Tree
     - Updated sql transactions
       - Batch search: Get list to test against: items (done), groups (done), uoms
       - Update atrributes: Price, UOM, Group -> Update
       - Create an ERPNext App to hold configs
+    
+    - Automate the DB Setup in Python SQL
 
     Open source
-    - Move configs to file
-    - Add to gitignore
     - Automate the DB Setup in Python SQL
 """
 
@@ -245,7 +245,7 @@ def get_invoice_items(ticket_id, income_account, cost_centre):
     rate = 0
     item_name = ""
 
-    item_query = sql("SELECT TicketId, MenuItemName, PortionName, Price, Quantity, OrderNumber, oTotal, GroupCode FROM [dbo].[OrdersView] WHERE TicketId ='"+ ticket_id +"';")
+    item_query = sql("SELECT TicketId, MenuItemName, PortionName, Price, Quantity, OrderNumber, oTotal, GroupCode, CreatingUserName FROM [dbo].[OrdersView] WHERE TicketId ='"+ ticket_id +"';")
 
     for i in item_query:
         
@@ -253,7 +253,8 @@ def get_invoice_items(ticket_id, income_account, cost_centre):
         uom = str(i[2])
         rate = float(i[3])  
         amount = float(i[6])      
-        group = str(i[7])
+        group = str(i[7])   
+        sales_person = str(i[8])
 
         chars = ["<", ">", ",", '"', "/", "%", "^", "*", "`", ";"]
 
@@ -295,7 +296,8 @@ def get_invoice_items(ticket_id, income_account, cost_centre):
             "amount": amount,
             "base_amount": amount,
             "income_account": income_account,
-            "cost_center": cost_centre
+            "cost_center": cost_centre,
+            "sales_person": sales_person
         })
 
     return items
@@ -319,7 +321,62 @@ def auto_fiscal_year():
             })
 
             # fiscal_year = datetime.strptime('01-01-'+ year, '%d-%m-%Y').strftime('%d-%m-%Y')
-            fiscal_year = https.get_doc("Fiscal Year", year)      
+            fiscal_year = https.get_doc("Fiscal Year", year)   
+
+def get_invoice_payments(ticket_id, invoice_total):  
+    payments = []
+
+    amount = 0
+    total = 0
+    pay_name = ""
+    payment_account = ""
+    pay_type = ""
+
+    query = sql("SELECT p.Name, Amount FROM dbo.Payments as p " +
+                    "LEFT OUTER JOIN dbo.Tickets AS t ON p.TicketId = t.Id " +
+                    "WHERE TicketId ='"+ ticket_id +"';"
+                )
+    
+    for i in query:
+        amount = int(i[1])
+        pay_name = str(i[0]).strip()
+        
+        total = total + amount
+
+        if pay_name.lower() in bank_payment_types:
+            payment_account = settings.bank_payment_account
+            pay_type = "Bank"
+        else:
+            payment_account = settings.cash_payment_account
+            pay_type = "Cash"
+
+        payments.append({            
+            "mode_of_payment": pay_name,
+            "amount": amount,
+            "base_amount": amount,
+            "account": payment_account,
+            "type": pay_type
+        })
+
+    if total != invoice_total:
+        print("Paid amount is not equal to Invoiced amount")
+        exit()
+    else:
+        return payments
+
+        """
+        pay_search = pay_name.strip().lower()
+            # check if doc is already synced
+            if pay_search in pay_types:
+
+        "payments":[{
+                    "mode_of_payment":"Cash",
+                    "amount":grand_total,
+                    "base_amount":grand_total,
+                    "account": income_account
+                }],
+        """
+    
 
 def sync_invoices():
     """              
@@ -342,29 +399,6 @@ def sync_invoices():
         restaurant = settings.restaurant_name
         income_account = settings.income_account
         cost_centre = settings.cost_centre
-
-        """settings = sql('SELECT * FROM dbo.erpnext_settings')
-
-        for row in settings:
-            if (row[0].strip() == "default_company"):
-                default_company = str(row[1]).strip()
-            elif (row[0].strip() == "default_customer"):
-                default_customer = str(row[1]).strip()
-            elif (row[0].strip() == "last_update"):
-                last_update = str(row[1]).strip()
-            elif (row[0].strip() == "territory"):
-                territory = str(row[1]).strip()
-            elif (row[0].strip() == "debit_to"):
-                debit_to = str(row[1]).strip()
-            elif (row[0].strip() == "tax_rate"):
-                tax_rate = int(row[1])
-            elif (row[0].strip() == "restaurant_name"):
-                restaurant = str(row[1]).strip()
-            elif (row[0].strip() == "income_account"):
-                income_account = str(row[1]).strip()
-            elif (row[0].strip().strip() == "cost_centre"):
-                cost_centre = str(row[1]).strip().strip()
-        """
 
         tickets = sql('SELECT * FROM dbo.PaidTicketView WHERE TicketUploaded <> 1 OR TicketUploaded IS NULL')
         
@@ -405,8 +439,10 @@ def sync_invoices():
             restaurant_table = str(t[-1])
             sambapos_ticket = str(t[0])
 
+            payments = get_invoice_payments(ticket_id, grand_total)
+
             resonse = https.insert({
-                        
+
                 "doctype": "Sales Invoice",
                 "naming_series": "ACC-SINV-.YYYY.-",
                 "company": default_company,
@@ -414,6 +450,7 @@ def sync_invoices():
                 "set_posting_time": "1",
                 "posting_date": posting_date,
                 "is_pos": "1", 
+                "pos_profile": settings.pos_profile, 
                 "conversion_rate": 1.0, 
                 "currency": "ZMW", 
                 "debit_to": debit_to,
@@ -421,8 +458,11 @@ def sync_invoices():
                 "customer_name": customer_name,
                 "grand_total": grand_total, 
                 "base_grand_total": grand_total, 
-                "net_total": net_total, 
-                "base_net_total": net_total, 
+                "net_total": net_total,
+                "paid_amount": grand_total,
+                "base_net_total": net_total,
+                "base_paid_amount": grand_total,
+                "rounded_total": grand_total,
                 "base_rounded_total": grand_total,
                 "rounded_total": grand_total, 
                 "plc_conversion_rate": 1.0, 
@@ -432,12 +472,7 @@ def sync_invoices():
                 "restaurant_table": restaurant_table,
                 "docstatus":1,
                 "items": items,
-                "payments":[{
-                    "mode_of_payment":"Cash",
-                    "amount":grand_total,
-                    "base_amount":grand_total,
-                    "account": income_account
-                }],
+                "payments": payments,
                 "taxes": [{
                     "account_head": "VAT - MCB", 
                     "charge_type": "On Net Total", 
@@ -445,14 +480,14 @@ def sync_invoices():
                     "tax_amount": float(tax),
                     "rate": tax_rate,
                     "included_in_print_rate": "1"
-                }],
-                
+                }],                
             })
 
             if resonse['name']:
                 
                 logging.info(posting_date +" - "+ sambapos_ticket +" - "+ resonse['name']+" - total: "+str(grand_total)+" - restaurant: "+restaurant)
                 sql_write("UPDATE dbo.Tickets SET TicketUploaded = 1 WHERE TicketNumber = '" + sambapos_ticket + "';")
+
 
 # close db connection, update last update time
 def finish():
@@ -476,7 +511,7 @@ def start():
     """
 
     logging.basicConfig(filename='sync.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    logging.info("Sync starting  *********************")
+    logging.info("Sync starting  ******************")
 
     sync_uoms()
     sync_groups()   
@@ -484,7 +519,7 @@ def start():
     sync_invoices()
     finish()
 
-def make_list(items):
+def make_list_add2(items):
     lst = []
     for i in items: 
         itm = str(i['name']).lower()
@@ -492,6 +527,13 @@ def make_list(items):
         lst.append(itm)
         lst.append(itm + " 2")
         
+    return lst
+
+def make_list(items):
+    lst = []
+    for i in items: 
+        lst.append(str(i['name']).lower())
+
     return lst
 
 def make_uom_list(items):
@@ -507,13 +549,13 @@ https = http_connection()
 # Stop if there's no internet connection
 if not https: exit()
 
-erp_groups = make_list(https.get_list('Item Group',
-                            fields = ["name"],    
+erp_groups = make_list_add2(https.get_list('Item Group',
+                            fields = ["name"],   
                             filters=None,
                             limit_page_length = 1000
                         ))
                         
-erp_items = make_list(https.get_list('Item',
+erp_items = make_list_add2(https.get_list('Item',
                             fields = ["name"],    
                             filters=None,
                             limit_page_length = 100000
@@ -522,7 +564,13 @@ erp_items = make_list(https.get_list('Item',
 erp_uoms = make_uom_list(https.get_list('UOM',
                             fields = ["uom_name"],    
                             filters=None,
-                            limit_page_length = 100000
+                            limit_page_length = 10000
+                        ))
+
+bank_payment_types = make_list(https.get_list('Mode of Payment',
+                            fields = ["name"],    
+                            filters=[{"type": "Bank"}],
+                            limit_page_length = 100
                         ))
 
 start()
