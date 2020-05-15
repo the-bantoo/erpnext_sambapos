@@ -61,10 +61,15 @@ Setup the script
 
 		General > Run whether user is logged on > Tick: Do not store password if password entry fails
 
-## Add ERPNext Custom Fields to Sales Invoice
+## Add ERPNext Custom Fields
+
+### Sales Invoice
 - restaurant_name
 - restaurant_table
-- Sambapos_ticket
+- sambapos_ticket
+
+### Sales Invoice Item
+- sales_person
 
 ## Configure MSSQL Database
 #### Add new Columns in the following tables
